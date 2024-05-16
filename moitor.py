@@ -11,7 +11,7 @@ urls = ["https://www.lidl.de/c/online-prospekte/s10005610",
         "https://www.lidl.ro/c/cataloage-online/s10019911"]
 
 filename = "output.txt"  
-ok_response = 201
+ok_response = 200
 check_interval = 10
 
 while True:
