@@ -1,22 +1,25 @@
 import time
 import requests
 import os
+import logging
 
-urls = ["https://www.lidl.de/c/online-prospekte/s10005610", 
-        "https://www.lidl.pl/c/nasze-gazetki/s10008614",
-        "https://www.lidl.bg/c/broshura/s10020060",
-        "https://www.lidl.be/c/nl-BE/folders-magazines/s10008101",
-        "https://www.lidl.sk/c/online-letak/s10008489",
-        "https://www.lidl.nl/c/service-contact-folders/s10008124",
-        "https://www.lidl.ro/c/cataloage-online/s10019911"]
+logging.basicConfig(filename='error.log', level=logging.ERROR, format='%(asctime)s %(message)s')
 
 filename = "output.txt"  
 ok_response = 200
-check_interval = 10
+check_interval = 30
+
+with open("urls.txt", "r") as file:
+    urls = [line.strip() for line in file]
 
 while True:
     for url in urls:
-        response = requests.get(url)
+        try:
+            response = requests.get(url)
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Error fetching {url}: {e}")
+            continue
         if response.status_code != ok_response:
-            os.system(f"curl -s -I -D - {url} >> {filename}")
-    time.sleep(check_interval) 
+            os.system(f"echo {url} >> {filename}")
+            os.system(f"curl -s -I -L {url} >> {filename}")
+    time.sleep(check_interval)
